@@ -11,13 +11,16 @@ def main():
 
   base_url = "https://fe.bolindadigital.com/wldcs_bol_fo/b2i/"
 
+  book_format = "eAudiobooks"
+  # book_format = "eBooks"
+
   for goodreads_book in get_goodreads_books():
     print("**************************************************")
     print("Searching for '{}' by {}.".format(goodreads_book["title"], goodreads_book["author"]))
     print()
   
-    borrowbox_result_page = get_borrowbox_results(goodreads_book["title"])
-    borrowbox_result = parse_borrowbox_results(borrowbox_result_page)
+    borrowbox_result_page = get_borrowbox_results(goodreads_book["title"], book_format)
+    borrowbox_result = parse_borrowbox_results(borrowbox_result_page, book_format)
 
     if borrowbox_result != "":
 
@@ -25,7 +28,10 @@ def main():
       if compare(borrowbox_result["title"], goodreads_book["title"]) > 0.5 and compare(borrowbox_result["author"], goodreads_book["author"]) > 0.5:
         print("Title:     {}".format(borrowbox_result["title"]))
         print("Author:    {}".format(borrowbox_result["author"]))
-        print("Narrator:  {}".format(borrowbox_result["narrator"]))
+
+        if(book_format == "eAudiobooks"):
+          print("Narrator:  {}".format(borrowbox_result["narrator"]))
+  
         print("URL:       {}{}".format(base_url, borrowbox_result["url"]))
         print("Available: {}".format(borrowbox_result["available"]))
       else:
@@ -35,7 +41,7 @@ def main():
       print("No results found.")
 
     print()
-    time.sleep(2) # Introduce delay so too many requests are not being made in a quick succession
+    time.sleep(1) # Introduce delay so too many requests are not being made in a quick succession
 
 if __name__ == '__main__':
     main()
